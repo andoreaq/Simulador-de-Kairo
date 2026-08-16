@@ -194,7 +194,7 @@ static void desenhar_circulo_na_tela(Circulo *c) {
 }
 
 static void renderizar(void) {
-  memset(tela, '', (size_t)largura * altura);
+  memset(tela, ' ', (size_t)largura * altura);
 
   for (int i = 0; i < MAX_CIRCULOS; i++) {
     if (circulos[i].vivo) {
