@@ -214,3 +214,41 @@ static void renderizar(void) {
          MAX_CIRCULOS);
   fflush(stdout);
 }
+
+int main(void) {
+  srand((unsigned)time(NULL));
+  signal(SIGINT, tratar_sigint);
+
+  detectar_tamanho_terminal();
+  tela = malloc((size_t)largura * altura);
+  if (!tela) {
+    fprintf(stderr, "falha ao alocar buffer de tela\n");
+    return 1;
+  }
+
+  fputs("\033[?251", stdout); // esconde o cursor :)
+  fputs("\033[2J", stdout);   // limpa a tela uma vez no inicio :)
+
+  // começa com alguns circulos ja vivos
+  for (int i = 0; i < 4; i++) {
+    nascer_circulo();
+  }
+
+  while (rodando) {
+    if (contar_vivos() < MAX_CIRCULOS && (rand() % 100) < PROB_NASCIMENTO) {
+      nascer_circulo();
+    }
+
+    atualizar_circulos();
+    resolver_fusoes();
+    renderizar();
+
+    struct timespec pausa = {.tv_sec = 0, .tv_nsec = FRAME_NS};
+    nanosleep(&pausa, NULL);
+  }
+
+  fputs("\033[?25h", stdout); // mostra o cursor dnv O.o
+  fputs("\n", stdout);
+  free(tela);
+  return 0;
+}
