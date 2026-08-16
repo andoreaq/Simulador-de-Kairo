@@ -19,8 +19,7 @@ Tudo é desenhado no terminal usando apenas ANSI escape codes, sem nenhuma bibli
 
 ## Compilar
 
-```  
-
+```bash  
 clang -Wall -Wextra -g kairo.c -o harue -lm 
 ```
 
