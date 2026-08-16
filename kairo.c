@@ -12,12 +12,12 @@
 #include <unistd.h>
 
 // parametros ajustaveis
-#define MAX_CIRCULOS 60
+#define MAX_CIRCULOS 20
 #define LARGURA_PADRAO 100
 #define ALTURA_PADRAO 36
-#define PROB_NASCIMENTO 6
+#define PROB_NASCIMENTO 5
 #define RAIO_INICIAL 1.1
-#define ATRACAO 0.010
+#define ATRACAO 0.030
 #define JITTER 0.045
 #define VEL_MAX 0.35
 #define FATOR_TOQUE 0.9
