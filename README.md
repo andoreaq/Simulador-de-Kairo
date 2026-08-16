@@ -14,14 +14,13 @@ Tudo é desenhado no terminal usando apenas ANSI escape codes, sem nenhuma bibli
 
 ## Requisitos
 
-- Qualquer compilador compatível com C11 ('gcc' ou 'clang')
-- Biblioteca matemática padrão do sistema ('libm')
+- Qualquer compilador compatível com C11 (`gcc` ou `clang`)
+- Biblioteca matemática padrão do sistema (`libm`)
 
 ## Compilar
 
 ```  
 
-```bash
 clang -Wall -Wextra -g kairo.c -o harue -lm 
 ```
 
@@ -29,8 +28,7 @@ clang -Wall -Wextra -g kairo.c -o harue -lm
 
 ## Executar
 
-```bash
-```
+
 ```
 ./harue
 ```
