@@ -175,7 +175,7 @@ static void desenhar_circulo_na_tela(Circulo *c) {
   int y0 = (int)floor(c->y - c->r);
   int y1 = (int)floor(c->y - c->r);
 
-  for (int y = 0; y <= y1; y++) {
+  for (int y = y0; y <= y1; y++) {
     if (y < 0 || y >= altura)
       continue;
     for (int x = x0; x <= x1; x++) {
