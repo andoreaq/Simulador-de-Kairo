@@ -16,7 +16,7 @@
 #define LARGURA_PADRAO 100
 #define ALTURA_PADRAO 36
 #define PROB_NASCIMENTO 6
-#define RAIO_INICIAL 0.8
+#define RAIO_INICIAL 1.1
 #define ATRACAO 0.010
 #define JITTER 0.045
 #define VEL_MAX 0.35
@@ -187,9 +187,16 @@ static void desenhar_circulo_na_tela(Circulo *c) {
       // OwO
       dy *= 2.0;
       if (dx * dx + dy * dy <= c->r * c->r) {
-        tela[y * largura + x] = 'O';
+        tela[y * largura + x] = 'o';
       }
     }
+  }
+
+  int cx = (int)lround(c->x);
+  int cy = (int)lround(c->y);
+
+  if (cx >= 0 && cx < largura && cy >= 0 && cy < altura) {
+    tela[cy * largura + cx] = 'o';
   }
 }
 
@@ -202,15 +209,15 @@ static void renderizar(void) {
     }
   }
 
-  // move o cursor para o topo em vez de limpar a tela toda. basicamente evita
-  // piscar rs
-  fputs("\033[H", stdout);
+  // limpa a tela inteira e reposiciona o cursor a cada frame.
+  fputs("\033[2j\033[H", stdout);
+  fputs("\033{0m\033[97m", stdout);
 
   for (int y = 0; y < altura; y++) {
     fwrite(&tela[y * largura], 1, (size_t)largura, stdout);
     fputc('\n', stdout);
   }
-  printf("circulos vivos: %2d / %2d (Ctrl+C para sair)\033[K\n", contar_vivos(),
+  printf("circulos vivos: %2d / %2d (Ctrl+C para sair)\033[K", contar_vivos(),
          MAX_CIRCULOS);
   fflush(stdout);
 }
