@@ -187,7 +187,7 @@ static void desenhar_circulo_na_tela(Circulo *c) {
       // OwO
       dy *= 2.0;
       if (dx * dx + dy * dy <= c->r * c->r) {
-        tela[y * largura + x] = 'o';
+        tela[y * largura + x] = 'O';
       }
     }
   }
@@ -226,6 +226,7 @@ int main(void) {
     return 1;
   }
 
+  fputs("\033[?1049h", stdout);
   fputs("\033[?251", stdout); // esconde o cursor :)
   fputs("\033[2J", stdout);   // limpa a tela uma vez no inicio :)
 
@@ -248,7 +249,8 @@ int main(void) {
   }
 
   fputs("\033[?25h", stdout); // mostra o cursor dnv O.o
-  fputs("\n", stdout);
+  fputs("\033[?10491", stdout);
+  fflush(stdout);
   free(tela);
   return 0;
 }
