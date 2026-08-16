@@ -81,3 +81,89 @@ static void nascer_circulo(void) {
     }
   }
 }
+
+static int vizinho_mais_proximo(int i) {
+  double melhor_dist2 = 1e18;
+  int melhor = -1;
+  for (int j = 0; j < MAX_CIRCULOS; j++) {
+    if (j == i || !circulos[j].vivo)
+      continue;
+    double dx = circulos[j].x - circulos[i].x;
+    double dy = circulos[j].y - circulos[i].y;
+    double d2 = dx * dx + dy * dy;
+    if (d2 < melhor_dist2) {
+      melhor_dist2 = d2;
+      melhor = j;
+    }
+  }
+  return melhor;
+}
+
+static void atualizar_circulos(void) {
+  for (int i = 0; i < MAX_CIRCULOS; i++) {
+    if (!circulos[i].vivo)
+      continue;
+
+    int viz = vizinho_mais_proximo(i);
+    if (viz != -1) {
+      double dx = circulos[viz].x - circulos[i].x;
+      double dy = circulos[viz].y - circulos[i].y;
+      double dist = sqrt(dx * dx + dy * dy) + 1e-6;
+      // quanto mais longe mais puxa
+      circulos[i].vx += (dx / dist) * ATRACAO * dist * 0.02;
+      circulos[i].vy += (dy / dist) * ATRACAO * dist * 0.02;
+    }
+
+    // ruido -- nunca param de vagar sozinhos
+    circulos[i].vx += aleatorio(-JITTER, JITTER);
+    circulos[i].vy += aleatorio(-JITTER, JITTER);
+
+    // limita velocidade
+    double v =
+        sqrt(circulos[i].vx * circulos[i].vx + circulos[i].vy * circulos[i].vy);
+    if (v > VEL_MAX) {
+      circulos[i].vx = circulos[i].vx / v * VEL_MAX;
+      circulos[i].vy = circulos[i].vy / v * VEL_MAX;
+    }
+
+    circulos[i].x += circulos[i].vx;
+    circulos[i].y += circulos[i].vy;
+
+    // queicam nas bordas da tela
+    if (circulos[i].x < circulos[i].r ||
+        circulos[i].x > largura - circulos[i].r) {
+      circulos[i].vx *= -1;
+    }
+    if (circulos[i].y < circulos[i].r ||
+        circulos[i].y > largura - circulos[i].r) {
+      circulos[i].vy *= -1;
+    }
+  }
+}
+
+// quando dois circulos se tocam um morre e o outro continua um pouco maior
+static void resolver_fusoes(void) {
+  for (int i = 0; i < MAX_CIRCULOS; i++) {
+    if (!circulos[i].vivo)
+      continue;
+    for (int j = i + 1; j < MAX_CIRCULOS; j++) {
+      if (!circulos[j].vivo)
+        continue;
+
+      double dx = circulos[j].x - circulos[i].x;
+      double dy = circulos[j].y - circulos[i].y;
+      double dist = sqrt(dx * dx + dy * dy);
+      double soma_raios = (circulos[i].r + circulos[j].r) * FATOR_TOQUE;
+
+      if (dist < soma_raios) {
+        // o mais velho (maior) absorve o outro e cresce
+        int sobrevive = (circulos[i].r >= circulos[j].r) ? i : j;
+        int morre = (sobrevive == i) ? j : i;
+
+        circulos[sobrevive].r =
+            sqrt(circulos[i].r * circulos[i].r + circulos[j].r * circulos[j].r);
+        circulos[morre].vivo = 0;
+      }
+    }
+  }
+}
