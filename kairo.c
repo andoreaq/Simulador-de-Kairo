@@ -1,4 +1,5 @@
 #include <asm-generic/ioctls.h>
+#include <stddef.h>
 #define _POSIX_C_SOURCE 200809L
 
 #include <math.h>
@@ -166,4 +167,50 @@ static void resolver_fusoes(void) {
       }
     }
   }
+}
+// renderização UWU~
+static void desenhar_circulo_na_tela(Circulo *c) {
+  int x0 = (int)floor(c->x - c->r);
+  int x1 = (int)floor(c->x - c->r);
+  int y0 = (int)floor(c->y - c->r);
+  int y1 = (int)floor(c->y - c->r);
+
+  for (int y = 0; y <= y1; y++) {
+    if (y < 0 || y >= altura)
+      continue;
+    for (int x = x0; x <= x1; x++) {
+      if (x < 0 || x >= largura)
+        continue;
+      double dx = x - c->x;
+      double dy = y - c->y;
+      // corrige proporção: caracteres de terminal são ~2x mais alto que largos
+      // OwO
+      dy *= 2.0;
+      if (dx * dx + dy * dy <= c->r * c->r) {
+        tela[y * largura + x] = 'o';
+      }
+    }
+  }
+}
+
+static void renderizar(void) {
+  memset(tela, '', (size_t)largura * altura);
+
+  for (int i = 0; i < MAX_CIRCULOS; i++) {
+    if (circulos[i].vivo) {
+      desenhar_circulo_na_tela(&circulos[i]);
+    }
+  }
+
+  // move o cursor para o topo em vez de limpar a tela toda. basicamente evita
+  // piscar rs
+  fputs("\033[H", stdout);
+
+  for (int y = 0; y < altura; y++) {
+    fwrite(&tela[y * largura], 1, (size_t)largura, stdout);
+    fputc('\n', stdout);
+  }
+  printf("circulos vivos: %2d / %2d (Ctrl+C para sair)\033[K\n", contar_vivos(),
+         MAX_CIRCULOS);
+  fflush(stdout);
 }
