@@ -12,12 +12,12 @@
 #include <unistd.h>
 
 // parametros ajustaveis
-#define MAX_CIRCULOS 20
+#define MAX_CIRCULOS 18
 #define LARGURA_PADRAO 100
 #define ALTURA_PADRAO 36
-#define PROB_NASCIMENTO 5
+#define PROB_NASCIMENTO 6
 #define RAIO_INICIAL 1.1
-#define ATRACAO 0.030
+#define ATRACAO 0.010
 #define JITTER 0.045
 #define VEL_MAX 0.35
 #define FATOR_TOQUE 0.9
@@ -144,6 +144,8 @@ static void atualizar_circulos(void) {
 
 // quando dois circulos se tocam um morre e o outro continua um pouco maior
 static void resolver_fusoes(void) {
+  double raio_max = (largura < altura ? largura : altura) / 2.2;
+
   for (int i = 0; i < MAX_CIRCULOS; i++) {
     if (!circulos[i].vivo)
       continue;
@@ -161,8 +163,11 @@ static void resolver_fusoes(void) {
         int sobrevive = (circulos[i].r >= circulos[j].r) ? i : j;
         int morre = (sobrevive == i) ? j : i;
 
-        circulos[sobrevive].r =
-            sqrt(circulos[i].r * circulos[i].r + circulos[j].r * circulos[j].r);
+        double novo_raio = circulos[i].r + circulos[j].r;
+        if (novo_raio > raio_max)
+          novo_raio = raio_max;
+
+        circulos[sobrevive].r = novo_raio;
         circulos[morre].vivo = 0;
       }
     }
